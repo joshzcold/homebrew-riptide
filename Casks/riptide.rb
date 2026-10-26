@@ -1,8 +1,11 @@
 cask "riptide" do
-  version "0.10.0"
-  sha256 "6299baf0e698c404e50948ecdf46e881575834475042a2f7b6012e135982de47"
+  arch arm: "aarch64", intel: "x86_64"
 
-  url "https://github.com/joshzcold/riptide/releases/download/v#{version}/riptide-#{version}-macos-aarch64.dmg"
+  version "0.11.0"
+  sha256 arm:   "bf6631e17d350787e83d6145dd041396f56e899613712ddf8d274f5acaabd35e",
+         intel: "69cfdf2cfa3f1256f21273a05fe76ef209ff3a31a674541db7c2a22342e19445"
+
+  url "https://github.com/joshzcold/riptide/releases/download/v#{version}/riptide-#{version}-macos-#{arch}.dmg"
   name "riptide"
   desc "Keyboard-driven web browser with vim-like keys, on CEF"
   homepage "https://joshzcold.github.io/riptide/"
@@ -12,7 +15,6 @@ cask "riptide" do
     strategy :github_latest
   end
 
-  depends_on arch: :arm64
   depends_on macos: ">= :monterey"
 
   app "riptide.app"
