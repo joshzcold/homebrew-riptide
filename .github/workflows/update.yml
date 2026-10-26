@@ -1,6 +1,7 @@
 name: update
 
-# Point the cask at riptide's latest release that has a macOS disk image.
+# Point the cask at riptide's latest release that has a macOS disk image
+# (Apple silicon, and Intel when the release has one).
 # riptide's release workflow can trigger this; it also runs every six hours.
 on:
   schedule:
@@ -23,14 +24,17 @@ jobs:
         run: |
           tag=$(gh release view --repo joshzcold/riptide --json tagName --jq .tagName)
           version=${tag#v}
-          dmg="riptide-$version-macos-aarch64.dmg"
-          sha=$(gh release download "$tag" --repo joshzcold/riptide --pattern SHA256SUMS --output - |
-            awk -v f="$dmg" '$2 == f || $2 == "*" f { print $1 }')
-          if [[ -z $sha ]]; then
-            echo "$tag has no $dmg; leaving the cask alone"
+          sums=$(gh release download "$tag" --repo joshzcold/riptide --pattern SHA256SUMS --output -)
+          sum() { awk -v f="riptide-$version-macos-$1.dmg" '$2 == f || $2 == "*" f { print $1 }' <<<"$sums"; }
+          arm=$(sum aarch64) intel=$(sum x86_64)
+          if [[ -z $arm ]]; then
+            echo "$tag has no Apple silicon disk image; leaving the cask alone"
             exit 0
           fi
-          sed -e "s/@VERSION@/$version/" -e "s/@SHA256@/$sha/" .github/riptide.rb.in > Casks/riptide.rb
+          # A release whose Intel build failed gets an Apple silicon-only cask.
+          template=.github/riptide.rb.in
+          [[ -n $intel ]] || template=.github/riptide-arm.rb.in
+          sed -e "s/@VERSION@/$version/" -e "s/@SHA256_ARM@/$arm/" -e "s/@SHA256_INTEL@/$intel/" "$template" > Casks/riptide.rb
           if git diff --quiet -- Casks/riptide.rb && git ls-files --error-unmatch Casks/riptide.rb >/dev/null 2>&1; then
             echo "already at $version"
             exit 0
