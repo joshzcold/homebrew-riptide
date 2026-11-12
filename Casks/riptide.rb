@@ -1,9 +1,9 @@
 cask "riptide" do
   arch arm: "aarch64", intel: "x86_64"
 
-  version "0.21.0"
-  sha256 arm:   "4c87b6d6b6ac1ef8fad9338a3836f86449ecacd539459af89be8f8c899e1c012",
-         intel: "9a712f9887da90b04db2b4a16f65600d03ffa79ac05ede2f024fb0d6cc139883"
+  version "0.22.0"
+  sha256 arm:   "829d4f2090e543074b60cf46707b41ccb70bf50531f7e0718fd7cf6000881ff7",
+         intel: "3645b20ac2da3fc2ddb3d1b1c9b11b62713f51fb7d1797e91875570dd5a427c0"
 
   url "https://github.com/joshzcold/riptide/releases/download/v#{version}/riptide-#{version}-macos-#{arch}.dmg"
   name "riptide"
